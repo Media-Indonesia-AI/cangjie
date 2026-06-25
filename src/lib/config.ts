@@ -13,7 +13,7 @@ export interface CangjieConfig {
   baseUrl?: string;
 }
 
-export const DEFAULT_BASE_URL = 'http://localhost:3000';
+export const DEFAULT_BASE_URL = 'http://145.79.8.90:3007';
 const CONFIG_PATH = join(homedir(), '.cangjie.json');
 
 export function loadConfig(): CangjieConfig {

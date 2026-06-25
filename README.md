@@ -9,6 +9,7 @@ Wraps four endpoints (the only ones you asked for):
 | resource  | verbs | path                       |
 | --------- | ----- | -------------------------- |
 | articles  | list  | `GET /v1/article`          |
+| articles  | create | `POST /v1/article`        |
 | tickers   | list  | `GET /v1/stocks/stock-tickers` |
 | topics    | list  | `GET /v1/topic`            |
 | stories   | list  | `GET /v1/story`            |
@@ -76,8 +77,17 @@ cangjie stories create \
   --article-id 665abc123def456789001aaa \
   --article-id 665abc123def456789001bbb
 
-# Body from stdin
-echo "Long summary..." | cangjie stories create --headline "x" --summary - ...
+# Create an article
+cangjie articles create \
+  --title "IDX ends higher on banking rally" \
+  --source "kontan.co.id" \
+  --published-at 2026-06-22T15:30:00.000Z \
+  --content "Full article body in plain text..." \
+  --topic-slug saham \
+  --topic-slug ekonomi
+
+# Body from stdin (works for both article --content and story --summary)
+echo "Long body..." | cangjie articles create --title "x" --source "y" --published-at 2026-06-22T15:30:00.000Z --content -
 
 # Output shaping (matches printingpress-cli flags)
 cangjie articles list --json --compact
