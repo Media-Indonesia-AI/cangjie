@@ -42,11 +42,10 @@ export function registerStories(program) {
         .description('Create a story (POST /v1/story)')
         .requiredOption('--headline <text>', 'story headline')
         .requiredOption('--summary <text>', 'story summary (use - to read from stdin)')
-        .requiredOption('--primary-topic-slug <slug>', 'slug of the primary topic')
-        .requiredOption('--primary-ticker-code <code>', 'primary ticker code')
+        .requiredOption('--headline-id <id>', 'ObjectId of the parent headline this story belongs to')
         .requiredOption('--primary-sentiment <s>', 'positive | negative | neutral')
         .requiredOption('--recap-date <iso>', 'recap date in ISO-8601 (e.g. 2026-06-24T00:00:00.000Z)')
-        .option('--article-id <id>', 'link an existing article by id (repeatable)', (val, prev) => [...(prev ?? []), val], []);
+        .option('--article-id <id>', 'existing article ObjectId to attach (repeatable, max 200)', (val, prev) => [...(prev ?? []), val], []);
     addCommonFlags(create)
         .option('--dry-run', 'print payload without sending')
         .action(async (opts) => {
@@ -55,10 +54,9 @@ export function registerStories(program) {
             const payload = {
                 headline: opts.headline,
                 summary,
-                primaryTopicSlug: opts.primaryTopicSlug,
-                primaryTickerCode: opts.primaryTickerCode,
                 primarySentiment: opts.primarySentiment,
                 recapDate: opts.recapDate,
+                headlineId: opts.headlineId,
             };
             if (opts.articleIds && opts.articleIds.length > 0) {
                 payload.articleIds = opts.articleIds;

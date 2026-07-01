@@ -16,8 +16,7 @@ interface StoriesListOpts extends CommonFlags {
 interface StoryCreateOpts extends CommonFlags {
   headline: string;
   summary: string;
-  primaryTopicSlug: string;
-  primaryTickerCode: string;
+  headlineId: string;
   primarySentiment: 'positive' | 'negative' | 'neutral';
   recapDate: string;
   articleIds?: string[];
@@ -66,8 +65,10 @@ export function registerStories(program: Command): void {
     .description('Create a story (POST /v1/story)')
     .requiredOption('--headline <text>', 'story headline')
     .requiredOption('--summary <text>', 'story summary (use - to read from stdin)')
-    .requiredOption('--primary-topic-slug <slug>', 'slug of the primary topic')
-    .requiredOption('--primary-ticker-code <code>', 'primary ticker code')
+    .requiredOption(
+      '--headline-id <id>',
+      'ObjectId of the parent headline this story belongs to',
+    )
     .requiredOption(
       '--primary-sentiment <s>',
       'positive | negative | neutral',
@@ -78,7 +79,7 @@ export function registerStories(program: Command): void {
     )
     .option(
       '--article-id <id>',
-      'link an existing article by id (repeatable)',
+      'existing article ObjectId to attach (repeatable, max 200)',
       (val: string, prev: string[]) => [...(prev ?? []), val],
       [] as string[],
     );
@@ -91,10 +92,9 @@ export function registerStories(program: Command): void {
         const payload: Record<string, unknown> = {
           headline: opts.headline,
           summary,
-          primaryTopicSlug: opts.primaryTopicSlug,
-          primaryTickerCode: opts.primaryTickerCode,
           primarySentiment: opts.primarySentiment,
           recapDate: opts.recapDate,
+          headlineId: opts.headlineId,
         };
         if (opts.articleIds && opts.articleIds.length > 0) {
           payload.articleIds = opts.articleIds;

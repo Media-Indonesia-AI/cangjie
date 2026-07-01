@@ -7,6 +7,7 @@ import { registerArticles } from './commands/articles.js';
 import { registerTickers } from './commands/tickers.js';
 import { registerTopics } from './commands/topics.js';
 import { registerStories } from './commands/stories.js';
+import { registerHeadlines } from './commands/headlines.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(
@@ -27,6 +28,7 @@ registerArticles(program);
 registerTickers(program);
 registerTopics(program);
 registerStories(program);
+registerHeadlines(program);
 
 program.parseAsync(process.argv).catch((err: Error) => {
   process.stderr.write(`✗ ${err.message}\n`);

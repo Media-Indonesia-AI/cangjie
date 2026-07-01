@@ -4,16 +4,22 @@ CLI wrapper for the **beritainvestor** REST API. Mirrors the conventions of `pri
 
 ## Scope
 
-Wraps four endpoints (the only ones you asked for):
-
-| resource  | verbs | path                       |
-| --------- | ----- | -------------------------- |
-| articles  | list  | `GET /v1/article`          |
-| articles  | create | `POST /v1/article`        |
-| tickers   | list  | `GET /v1/stocks/stock-tickers` |
-| topics    | list  | `GET /v1/topic`            |
-| stories   | list  | `GET /v1/story`            |
-| stories   | create | `POST /v1/story`          |
+| resource   | verbs | path                                       |
+| ---------- | ----- | ------------------------------------------ |
+| articles   | list  | `GET /v1/article`                          |
+| articles   | create | `POST /v1/article`                        |
+| tickers    | list  | `GET /v1/stocks/stock-tickers` (limit=10000, never paginated) |
+| topics     | list  | `GET /v1/topic`                            |
+| stories    | list  | `GET /v1/story`                            |
+| stories    | create | `POST /v1/story`                          |
+| headlines  | list  | `GET /v1/headlines`                        |
+| headlines  | get   | `GET /v1/headlines/{id}`                   |
+| headlines  | create | `POST /v1/headlines`                      |
+| headlines  | update | `PATCH /v1/headlines/{id}`                 |
+| headlines  | delete | `DELETE /v1/headlines/{id}`                |
+| headlines  | stories | `GET /v1/headlines/{id}/stories`          |
+| headlines  | keywords | `GET /v1/headlines/{id}/keywords`        |
+| headlines  | topics  | `GET /v1/headlines/{id}/topics`          |
 
 The OpenAPI spec lives at `http://localhost:3000/v1/docs-json` (local) and `http://145.79.8.90:3007/v1/docs-json` (remote).
 
@@ -58,24 +64,47 @@ echo '{ "identifier": "alice@example.com", "password": "s3cret", "baseUrl": "htt
 # Lists
 cangjie topics list --limit 5
 cangjie articles list --limit 10 --skip 0
-cangjie tickers list --limit 10 --offset 0
+cangjie tickers list                # limit is pinned at 10000, no pagination
 cangjie stories list --limit 5
+cangjie headlines list --limit 10
 
 # Filters — repeat --filter for AND-combined conditions
-cangjie stories list --filter primaryTickerCode=BBCA --filter primarySentiment=positive
-cangjie stories list --filter headline=like:BBCA
-cangjie stories list --filter recapDate=gte:2026-06-01
+cangjie stories list --filter sentiment=positive
+cangjie headlines list --filter sentiment=positive
+cangjie headlines list --filter created_at=gte:2026-06-01
 
-# Create a story
+# Create a story (parent headline must already exist; pass its ObjectId)
 cangjie stories create \
   --headline "BBCA catat laba Rp 12,5T" \
   --summary "BBCA membukukan laba bersih konsolidasi..." \
-  --primary-topic-slug emiten \
-  --primary-ticker-code BBCA \
   --primary-sentiment positive \
   --recap-date 2026-06-24T00:00:00.000Z \
+  --headline-id 665abc123def456789001ccc \
   --article-id 665abc123def456789001aaa \
   --article-id 665abc123def456789001bbb
+
+# Headline lifecycle
+cangjie headlines get 665abc123def456789001ccc --json
+cangjie headlines stories 665abc123def456789001ccc --limit 5
+cangjie headlines keywords 665abc123def456789001ccc
+cangjie headlines topics 665abc123def456789001ccc
+
+# Create a headline (attach stories + tags + keyword pivots in one shot)
+cangjie headlines create \
+  --title "BBCA catat laba bersih Rp 12,5T di K1 2026" \
+  --summary "BBCA membukukan laba bersih konsolidasi..." \
+  --primary-ticker-code BBCA \
+  --sentiment positive \
+  --story-id 665abc123def456789001aaa \
+  --topic-id 665abc123def456789001111 \
+  --keyword label=trading_volume,value=85,description="Volume up 12% vs prior session",sentiment=positive
+
+# Partial update — any of storyIds / topicIds / keywords REPLACE the full set when present
+cangjie headlines update 665abc123def456789001ccc \
+  --summary "Updated summary..." \
+  --story-id 665aaa --story-id 665bbb
+
+cangjie headlines delete 665abc123def456789001ccc
 
 # Create an article
 cangjie articles create \
@@ -129,8 +158,9 @@ src/
     output.ts            table / json / csv / compact / select renderer
     flags.ts             shared commander flags + error handler
   commands/
-    articles.ts          GET /v1/article
-    tickers.ts           GET /v1/stocks/stock-tickers
+    articles.ts          GET /v1/article, POST /v1/article
+    tickers.ts           GET /v1/stocks/stock-tickers (limit pinned at 10000)
     topics.ts            GET /v1/topic
     stories.ts           GET /v1/story, POST /v1/story
+    headlines.ts         GET / POST / PATCH / DELETE /v1/headlines[/{id}[/stories|/keywords|/topics]]
 ```
