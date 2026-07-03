@@ -128,16 +128,16 @@ export function registerHeadlines(program) {
             const payload = {
                 title: opts.title,
                 summary,
-                primaryTickerCode: opts.primaryTickerCode,
+                primary_ticker_code: opts.primaryTickerCode,
                 sentiment: opts.sentiment,
             };
             const storyIds = buildIds(opts.storyId);
             const topicIds = buildIds(opts.topicId);
             const keywords = buildKeywords(opts.keyword);
             if (storyIds)
-                payload.storyIds = storyIds;
+                payload.story_ids = storyIds;
             if (topicIds)
-                payload.topicIds = topicIds;
+                payload.topic_ids = topicIds;
             if (keywords)
                 payload.keywords = keywords;
             if (opts.dryRun)
@@ -175,7 +175,7 @@ export function registerHeadlines(program) {
             if (summary !== undefined)
                 payload.summary = summary;
             if (opts.primaryTickerCode !== undefined) {
-                payload.primaryTickerCode = opts.primaryTickerCode;
+                payload.primary_ticker_code = opts.primaryTickerCode;
             }
             if (opts.sentiment !== undefined)
                 payload.sentiment = opts.sentiment;
@@ -183,9 +183,9 @@ export function registerHeadlines(program) {
             const topicIds = buildIds(opts.topicId);
             const keywords = buildKeywords(opts.keyword);
             if (storyIds)
-                payload.storyIds = storyIds;
+                payload.story_ids = storyIds;
             if (topicIds)
-                payload.topicIds = topicIds;
+                payload.topic_ids = topicIds;
             if (keywords)
                 payload.keywords = keywords;
             if (opts.dryRun)

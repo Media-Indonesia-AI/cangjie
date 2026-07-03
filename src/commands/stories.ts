@@ -19,7 +19,7 @@ interface StoryCreateOpts extends CommonFlags {
   headlineId: string;
   primarySentiment: 'positive' | 'negative' | 'neutral';
   recapDate: string;
-  articleIds?: string[];
+  articleId?: string[];
   dryRun?: boolean;
 }
 
@@ -92,12 +92,12 @@ export function registerStories(program: Command): void {
         const payload: Record<string, unknown> = {
           headline: opts.headline,
           summary,
-          primarySentiment: opts.primarySentiment,
-          recapDate: opts.recapDate,
-          headlineId: opts.headlineId,
+          primary_sentiment: opts.primarySentiment,
+          recap_date: opts.recapDate,
+          headline_id: opts.headlineId,
         };
-        if (opts.articleIds && opts.articleIds.length > 0) {
-          payload.articleIds = opts.articleIds;
+        if (opts.articleId && opts.articleId.length > 0) {
+          payload.article_ids = opts.articleId;
         }
 
         if (opts.dryRun) return payload;

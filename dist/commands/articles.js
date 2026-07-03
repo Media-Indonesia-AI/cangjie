@@ -52,11 +52,11 @@ export function registerArticles(program) {
             const payload = {
                 title: opts.title,
                 source: opts.source,
-                publishedAt: opts.publishedAt,
+                published_at: opts.publishedAt,
                 content,
             };
             if (opts.topicSlug && opts.topicSlug.length > 0) {
-                payload.topicSlugs = opts.topicSlug;
+                payload.topic_slugs = opts.topicSlug;
             }
             if (opts.dryRun)
                 return payload;

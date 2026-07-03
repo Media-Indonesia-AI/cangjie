@@ -99,7 +99,7 @@ cangjie headlines create \
   --topic-id 665abc123def456789001111 \
   --keyword label=trading_volume,value=85,description="Volume up 12% vs prior session",sentiment=positive
 
-# Partial update — any of storyIds / topicIds / keywords REPLACE the full set when present
+# Partial update — any of story_ids / topic_ids / keywords REPLACE the full set when present
 cangjie headlines update 665abc123def456789001ccc \
   --summary "Updated summary..." \
   --story-id 665aaa --story-id 665bbb
@@ -120,7 +120,7 @@ echo "Long body..." | cangjie articles create --title "x" --source "y" --publish
 
 # Output shaping (matches printingpress-cli flags)
 cangjie articles list --json --compact
-cangjie stories list --select id,headline,primarySentiment
+cangjie stories list --select id,headline,primary_sentiment
 cangjie topics list --csv > topics.csv
 cangjie articles list --quiet         # ids only
 cangjie articles list --no-color      # plain
